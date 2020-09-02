@@ -31,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
     String filepath;
     File f = null;
 
+
     @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,7 +62,6 @@ public class MainActivity extends AppCompatActivity {
         s.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                fileregistration();
                 String host = retrieveuser();
                 Client c = new Client(host,82, f);
                 c.execute(host);
@@ -82,6 +82,11 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+   protected void onStop() {
+        super.onStop();
+        fileregistration();
     }
 
     protected void checkPermissions() {
