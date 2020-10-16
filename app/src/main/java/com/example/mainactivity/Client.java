@@ -26,18 +26,21 @@ public class Client extends AsyncTask<String, Void, Void> {
     protected Void doInBackground(String... strings) {
         try {
 
-            client = new Socket(host, port);
-            fichename(fc);
-            byte[] backup = new byte[(int) this.fc.length()];
+            fichename();
+            //
+            // Read file from disk
+            //
+            FileReader fileReader = new FileReader();
+            byte[] data = fileReader.readFile(fc.getAbsolutePath());
+            //
+            // Send binary data over the TCP/IP socket connection
+            //
+            for (byte i : data) {
+                out.write(i);
+            }
 
-            fin = new FileInputStream(fc);
-            din = new BufferedInputStream(fin);
-            this.out = client.getOutputStream();
-
-
-            din.read(backup, 0, backup.length);
-            out.write(backup, 0, backup.length);
-            out.flush();
+            System.out.println("\r\nSent " + data.length + " bytes to server.");
+            out.close();
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -73,9 +76,9 @@ public class Client extends AsyncTask<String, Void, Void> {
         return null;
     }
 
-    public void fichename(File f){ // Fonction envoyant le nom et la taille du fichier
+    public void fichename(){ // Fonction envoyant le nom et la taille du fichier
         try{
-            String file = f.getName() + "/"+ f.length();
+            String file = fc.getName() + "/"+ fc.length();
             out = client.getOutputStream();
             dout = new DataOutputStream(out);
 
@@ -84,11 +87,6 @@ public class Client extends AsyncTask<String, Void, Void> {
 
         } catch (IOException e) {
             e.printStackTrace();
-        } finally {
-            if(out != null) {
-                out = null;
-                dout = null;
-            }
         }
     }
 

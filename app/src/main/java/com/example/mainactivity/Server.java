@@ -2,6 +2,7 @@ package com.example.mainactivity;
 
 import android.os.AsyncTask;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.DataInputStream;
 import java.io.File;
@@ -16,8 +17,6 @@ public class Server extends AsyncTask<Void, Void, Void> {
     private static int port = 82;
     Socket client = null;
     String[] s = null;
-    FileOutputStream fout;
-    BufferedOutputStream dout = null;
     InputStream ins = null;
     DataInputStream din;
     File f;
@@ -35,22 +34,26 @@ public class Server extends AsyncTask<Void, Void, Void> {
         try {
             receive();
             f = new File(s[0]);
-            fout = new FileOutputStream(f);
-            dout = new BufferedOutputStream(fout);
-            ins = this.client.getInputStream();
+            FileWriter fw = new FileWriter();
 
-            long taille = Long.parseLong(s[1]);
-            byte[] receiver = new byte[(int) taille];
-            int bytesRead = 0;
 
-            while ((bytesRead = ins.read(receiver)) != -1)
-                dout.write(receiver, 0, bytesRead);
+            String clientAddress = client.getInetAddress().getHostAddress();
+            System.out.println("\r\nNew connection from " + clientAddress);
+            //
+            // Read binary data from client socket and write to file
+            //
+            ins = client.getInputStream();
+            BufferedInputStream bis = new BufferedInputStream(ins);
+            int fileSize = fw.writeFile(f, bis);
+            bis.close();
 
-            dout.flush();
+            //
+            // Close socket connection
+            //
             client.close();
-
-        } catch (IOException ex) {
-            ex.printStackTrace();
+            System.out.println("\r\nWrote " + fileSize + " bytes to file " + s[0]);
+        }catch (IOException e){
+            e.printStackTrace();
         }
 
         return null;
@@ -68,11 +71,6 @@ public class Server extends AsyncTask<Void, Void, Void> {
 
         } catch (IOException ex) {
             ex.printStackTrace();
-        }finally {
-            if(ins != null){
-                ins = null;
-                din = null;
-            }
         }
     }
 }
