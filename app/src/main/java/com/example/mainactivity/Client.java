@@ -26,6 +26,7 @@ public class Client extends AsyncTask<String, Void, Void> {
     protected Void doInBackground(String... strings) {
         try {
 
+            client = new Socket(host, port);
             fichename();
             //
             // Read file from disk
@@ -45,18 +46,7 @@ public class Client extends AsyncTask<String, Void, Void> {
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
-            if (this.din != null) {
-                try {
-                    this.fin.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                try {
-                    this.din.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
+
             if(out != null) {
                 try {
                     out.close();

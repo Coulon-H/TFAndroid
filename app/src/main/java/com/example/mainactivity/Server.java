@@ -22,9 +22,7 @@ public class Server extends AsyncTask<Void, Void, Void> {
     File f;
 
     public Server() throws IOException {
-        try (ServerSocket server = new ServerSocket(port)) {
-            this.client = server.accept();
-        }
+        ServerSocket s = new ServerSocket(82);
     }
 
 
